@@ -124,7 +124,12 @@
         }
 
         function keyToBase64(key) {
-            return btoa(String.fromCharCode.apply(null, key));
+            let binary = '';
+            const len = key.byteLength;
+            for (let i = 0; i < len; i++) {
+                binary += String.fromCharCode(key[i]);
+            }
+            return btoa(binary);
         }
 
         function base64ToKey(str) {
