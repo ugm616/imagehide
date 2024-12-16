@@ -20,29 +20,7 @@
             flex-direction: column;
         }
 
-        input[type="file"],
-        textarea {
-            margin: 10px 0;
-        }
-
-        input[type="file"] {
-            background-color: darkorange;
-            color: cyan;
-            font-family: 'Aldrich', sans-serif;
-            border: none;
-            padding: 10px 20px;
-            cursor: pointer;
-        }
-
-        button {
-            background-color: darkorange;
-            color: cyan;
-            font-family: 'Aldrich', sans-serif;
-            border: none;
-            padding: 10px 20px;
-            cursor: pointer;
-        }
-
+        .input-container,
         .button-container {
             display: flex;
             justify-content: center;
@@ -50,22 +28,40 @@
             margin-top: 10px;
         }
 
-        canvas {
-            margin-top: 20px;
+        input[type="file"],
+        button {
+            background-color: #8B4000; /* Very dark orange */
+            color: cyan;
+            font-family: 'Aldrich', sans-serif;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+
+        input[type="file"]:hover,
+        button:hover,
+        button:active {
+            background-color: orange;
+            color: black;
         }
 
         textarea {
             width: 300px;
             height: 100px;
             font-family: 'Aldrich', sans-serif;
+            margin: 10px 0;
+        }
+
+        canvas {
+            margin-top: 20px;
         }
     </style>
 </head>
 
 <body>
     <h1>PYKZOR 1.0</h1>
-    <input type="file" id="upload" accept="image/*">
-    <div class="button-container">
+    <div class="input-container">
+        <input type="file" id="upload" accept="image/*">
         <button onclick="encryptImage()">Encrypt</button>
         <button onclick="decryptImage()">Decrypt</button>
         <button onclick="copyKey()">Copy Key</button>
