@@ -77,7 +77,6 @@
         let originalImageData;
         let encryptedImageData;
 
-        // Open IndexedDB
         const request = indexedDB.open('imagehide', 1);
         let db;
 
@@ -155,7 +154,6 @@
             link.click();
         }
 
-        // Function to compress a string using gzip
         async function compressString(str) {
             const encoder = new TextEncoder();
             const data = encoder.encode(str);
@@ -177,7 +175,6 @@
             return compressed;
         }
 
-        // Function to decompress a gzip compressed string
         async function decompressString(compressed) {
             const ds = new DecompressionStream('gzip');
             const writer = ds.writable.getWriter();
@@ -194,17 +191,18 @@
             });
         }
 
-        // Function to encode a Uint8Array to base64
         function uint8ArrayToBase64(uint8Array) {
-            return btoa(String.fromCharCode(...uint8Array));
+            let binary = '';
+            for (let i = 0; i < uint8Array.length; i++) {
+                binary += String.fromCharCode(uint8Array[i]);
+            }
+            return btoa(binary);
         }
 
-        // Function to decode a base64 string to Uint8Array
         function base64ToUint8Array(base64) {
             return new Uint8Array(atob(base64).split('').map(char => char.charCodeAt(0)));
         }
 
-        // Modify the encryptImage function to compress the key
         async function encryptImage() {
             const fileInput = document.getElementById('upload');
             if (fileInput.files.length === 0) {
@@ -224,7 +222,6 @@
             document.getElementById('downloadButton').style.display = 'inline';
         }
 
-        // Modify the decryptImage function to decompress the key before using it
         async function decryptImage() {
             const keyStr = document.getElementById('keyBox').value;
             if (!keyStr) {
