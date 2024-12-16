@@ -218,6 +218,12 @@
                 const key = base64ToKey(keyStr);
                 const decryptedData = applyXOR(encryptedData, key);
                 const decryptedImageData = new ImageData(decryptedData, record.width, record.height);
+
+                // Ensure the canvas dimensions match the original image
+                const canvas = document.getElementById('canvas');
+                canvas.width = record.width;
+                canvas.height = record.height;
+
                 displayImage(decryptedImageData);
                 document.getElementById('downloadButton').style.display = 'inline';
             };
