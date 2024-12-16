@@ -154,41 +154,32 @@
             link.click();
         }
 
-        async function compressString(str) {
-            const encoder = new TextEncoder();
-            const data = encoder.encode(str);
-            const compressed = await new Promise((resolve, reject) => {
-                const cs = new CompressionStream('gzip');
-                const writer = cs.writable.getWriter();
-                writer.write(data).then(() => writer.close());
-                const reader = cs.readable.getReader();
-                const chunks = [];
-                reader.read().then(function process({ done, value }) {
-                    if (done) {
-                        resolve(new Uint8Array(chunks.reduce((acc, chunk) => [...acc, ...chunk], [])));
-                        return;
-                    }
-                    chunks.push(value);
-                    reader.read().then(process);
-                });
-            });
-            return compressed;
+        async function compressUint8Array(data) {
+            const cs = new CompressionStream('gzip');
+            const writer = cs.writable.getWriter();
+            writer.write(data).then(() => writer.close());
+            const reader = cs.readable.getReader();
+            const chunks = [];
+            while (true) {
+                const { done, value } = await reader.read();
+                if (done) break;
+                chunks.push(value);
+            }
+            return new Uint8Array(chunks.reduce((acc, chunk) => [...acc, ...chunk], []));
         }
 
-        async function decompressString(compressed) {
+        async function decompressUint8Array(data) {
             const ds = new DecompressionStream('gzip');
             const writer = ds.writable.getWriter();
-            writer.write(compressed).then(() => writer.close());
+            writer.write(data).then(() => writer.close());
             const reader = ds.readable.getReader();
             const chunks = [];
-            reader.read().then(function process({ done, value }) {
-                if (done) {
-                    const decoder = new TextDecoder();
-                    return decoder.decode(new Uint8Array(chunks.reduce((acc, chunk) => [...acc, ...chunk], [])));
-                }
+            while (true) {
+                const { done, value } = await reader.read();
+                if (done) break;
                 chunks.push(value);
-                reader.read().then(process);
-            });
+            }
+            return new Uint8Array(chunks.reduce((acc, chunk) => [...acc, ...chunk], []));
         }
 
         function uint8ArrayToBase64(uint8Array) {
@@ -217,7 +208,7 @@
             encryptedImageData = new ImageData(encryptedData, originalImageData.width, originalImageData.height);
             displayImage(encryptedImageData);
 
-            const compressedKey = await compressString(keyToBase64(key));
+            const compressedKey = await compressUint8Array(new TextEncoder().encode(keyToBase64(key)));
             document.getElementById('keyBox').value = uint8ArrayToBase64(compressedKey);
             document.getElementById('downloadButton').style.display = 'inline';
         }
@@ -230,7 +221,7 @@
             }
 
             const compressedKey = base64ToUint8Array(keyStr);
-            const decompressedKey = await decompressString(compressedKey);
+            const decompressedKey = new TextDecoder().decode(await decompressUint8Array(compressedKey));
 
             const transaction = db.transaction(['images']);
             const objectStore = transaction.objectStore('images');
