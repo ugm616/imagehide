@@ -149,18 +149,18 @@
             document.getElementById('keyBox').value = keyToString(key);
         }
 
-        function decryptImage() {
-            const keyStr = document.getElementById('keyBox').value;
-            if (!encryptedImageData || !keyStr) {
-                alert('No encrypted image or key provided!');
-                return;
-            }
+function decryptImage() {
+    const keyStr = document.getElementById('keyBox').value;
+    if (!encryptedImageData || !keyStr) {
+        alert('No encrypted image or key provided!');
+        return;
+    }
 
-            const key = stringToKey(keyStr);
-            const decryptedData = applyXOR(encryptedImageData.data, key);
-            const decryptedImageData = new ImageData(decryptedData, encryptedImageData.width, encryptedImageData.height);
-            displayImage(decryptedImageData);
-        }
+    const key = stringToKey(keyStr);
+    const decryptedData = applyXOR(encryptedImageData.data, key);
+    const decryptedImageData = new ImageData(decryptedData, encryptedImageData.width, encryptedImageData.height);
+    displayImage(decryptedImageData);
+}
 
         function copyKey() {
             const keyBox = document.getElementById('keyBox');
