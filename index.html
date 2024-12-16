@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PYKZOR</title>
+    <title>PICXOR</title>
     <link href="https://fonts.googleapis.com/css2?family=Aldrich&display=swap" rel="stylesheet">
     <style>
         body {
@@ -63,13 +63,14 @@
 </head>
 
 <body>
-    <h1>PYKZOR</h1>
+    <h1>PICXOR</h1>
     <input type="file" id="upload" accept="image/*">
     <div class="button-container">
         <button onclick="encryptImage()">Encrypt</button>
         <button onclick="decryptImage()">Decrypt</button>
         <button onclick="copyKey()">Copy Key</button>
         <button onclick="pasteKey()">Paste Key</button>
+        <button id="downloadButton" onclick="downloadImage()" style="display:none;">Download Image</button>
     </div>
     <br>
     <label for="keyBox">Key:</label>
@@ -150,6 +151,14 @@
             ctx.putImageData(imageData, 0, 0);
         }
 
+        function downloadImage() {
+            const canvas = document.getElementById('canvas');
+            const link = document.createElement('a');
+            link.download = 'image.png';
+            link.href = canvas.toDataURL();
+            link.click();
+        }
+
         async function encryptImage() {
             const fileInput = document.getElementById('upload');
             if (fileInput.files.length === 0) {
@@ -183,6 +192,7 @@
             };
 
             document.getElementById('keyBox').value = keyToBase64(key);
+            document.getElementById('downloadButton').style.display = 'inline';
         }
 
         function decryptImage() {
@@ -209,6 +219,7 @@
                 const decryptedData = applyXOR(encryptedData, key);
                 const decryptedImageData = new ImageData(decryptedData, record.width, record.height);
                 displayImage(decryptedImageData);
+                document.getElementById('downloadButton').style.display = 'inline';
             };
 
             request.onerror = function(event) {
